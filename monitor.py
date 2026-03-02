@@ -25,11 +25,15 @@ while True:
     soup = BeautifulSoup(html, "html.parser")
     button = soup.find("a", class_="btn_style direct")
 
-    if button:
-        print("🔥 구매 가능!", flush=True)
-        send_telegram("🔥 재입고!\n" + URL)
-        break
+    if "/cart" in html or "/order" in html:
+    print("🔥 구매 가능!", flush=True)
+    send_telegram("🔥 재입고!\n" + URL)
+    break
     else:
         print("아직 품절 상태", flush=True)
 
+
+
+
+    
     time.sleep(5)
