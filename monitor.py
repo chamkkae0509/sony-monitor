@@ -1,29 +1,48 @@
-import os, time, requests
+import os, time, random, requests
 
 API_URL = "https://shop-api.e-ncp.com/products/132237901/options"
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
+SHOPBY_CLIENT_ID = os.getenv("SHOPBY_CLIENT_ID")
 
 HEADERS = {
-    "Version": os.getenv("SHOPBY_VERSION", "1.0"),
-    "clientId": os.getenv("SHOPBY_CLIENT_ID", ""),   # 반드시 채워야 할 가능성 큼
-    "platform": os.getenv("SHOPBY_PLATFORM", "PC"),  # PC / MOBILE_WEB / AOS / IOS 중 하나
+    "Version": "1.0",
+    "clientId": SHOPBY_CLIENT_ID,
+    "platform": "PC",
     "Accept": "application/json",
     "User-Agent": "stock-monitor/1.0",
 }
 
-def fetch_json():
-    res = requests.get(API_URL, headers=HEADERS, timeout=10)
-    if res.status_code != 200:
-        # 400일 때 원인 메시지가 여기 들어오는 경우가 많음
-        print("HTTP", res.status_code, "body:", res.text[:500], flush=True)
-        res.raise_for_status()
-    return res.json()
+def send_telegram(msg):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    requests.post(url, data={"chat_id": CHAT_ID, "text": msg}, timeout=10)
+
+print("모니터링 시작", flush=True)
+last_sale_type = None
 
 while True:
     try:
-        data = fetch_json()
+        res = requests.get(API_URL, headers=HEADERS, timeout=10)
+        if res.status_code != 200:
+            print("HTTP", res.status_code, "body:", res.text[:300], flush=True)
+        res.raise_for_status()
+
+        data = res.json()
         opt = (data.get("flatOptions") or [{}])[0]
-        print("saleType=", opt.get("saleType"), "stockCnt=", opt.get("stockCnt"), flush=True)
+        sale_type = opt.get("saleType")
+        stock_cnt = opt.get("stockCnt")
+
+        print(f"상태={sale_type}, stockCnt={stock_cnt}", flush=True)
+
+        if last_sale_type is not None and sale_type != last_sale_type:
+            if sale_type == "AVAILABLE":
+                send_telegram(f"🔥 재입고! 구매 가능 상태로 변경됐어요!\n현재 상태: {sale_type}")
+            else:
+                send_telegram(f"📦 상태 변경: {last_sale_type} → {sale_type}")
+
+        last_sale_type = sale_type
+
     except Exception as e:
         print("에러:", repr(e), flush=True)
 
-    time.sleep(3)
+    time.sleep(5 + random.uniform(0, 1))
