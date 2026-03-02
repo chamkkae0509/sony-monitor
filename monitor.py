@@ -16,6 +16,8 @@ def send_telegram(msg):
 
 print("모니터링 시작", flush=True)
 
+send_telegram("✅ 테스트 메시지")
+
 while True:
     res = requests.get(URL)
     html = res.text
@@ -28,5 +30,3 @@ while True:
         print("아직 품절 상태", flush=True)
 
     time.sleep(5)
-
-send_telegram("✅ 테스트 메시지")
