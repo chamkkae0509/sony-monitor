@@ -3,7 +3,7 @@ import time
 import random
 import requests
 
-API_URL = "https://shop-api.e-ncp.com/products/123967519/options"
+API_URL = "https://shop-api.e-ncp.com/products/132237901/options"
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
