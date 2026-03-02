@@ -3,7 +3,7 @@ import time
 import os
 from bs4 import BeautifulSoup
 
-URL = "https://store.sony.co.kr/product-view/131844793"
+URL = "https://store.sony.co.kr/product-view/131263965"
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
@@ -25,15 +25,12 @@ while True:
     soup = BeautifulSoup(html, "html.parser")
     button = soup.find("a", class_="btn_style direct")
 
+    # 구매 가능 조건
     if "/cart" in html or "/order" in html:
-    print("🔥 구매 가능!", flush=True)
-    send_telegram("🔥 재입고!\n" + URL)
-    break
+        print("🔥 구매 가능!", flush=True)
+        send_telegram("🔥 재입고!\n" + URL)
+        break
     else:
         print("아직 품절 상태", flush=True)
 
-
-
-
-    
     time.sleep(5)
