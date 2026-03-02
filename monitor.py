@@ -18,16 +18,20 @@ def send_telegram(msg):
 print("모니터링 시작", flush=True)
 
 while True:
-    res = requests.get(API_URL)
-    data = res.json()
+    try:
+        res = requests.get(API_URL)
+        data = res.json()
 
-    sale_type = data["saleType"]
+        sale_type = data["flatOptions"][0]["saleType"]
 
-    print("현재 상태:", sale_type, flush=True)
+        print("현재 상태:", sale_type, flush=True)
 
-    if sale_type == "AVAILABLE":
-        print("🔥 구매 가능!", flush=True)
-        send_telegram("🔥 재입고 발생!")
-        break
+        if sale_type == "AVAILABLE":
+            print("🔥 구매 가능!", flush=True)
+            send_telegram("🔥 소니 재입고 발생! 지금 확인하세요!")
+            break
+
+    except Exception as e:
+        print("에러 발생:", e, flush=True)
 
     time.sleep(3)
