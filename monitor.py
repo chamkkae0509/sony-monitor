@@ -15,4 +15,4 @@ while True:
     else:
         print("아직 품절 상태", flush=True)
 
-    time.sleep(10)
+    time.sleep(5)
