@@ -1,9 +1,8 @@
 import requests
 import time
 import os
-from bs4 import BeautifulSoup
 
-URL = "https://store.sony.co.kr/product-view/131263965"
+API_URL = "https://shop-api.e-ncp.com/products/131263965/options"
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
@@ -19,18 +18,16 @@ def send_telegram(msg):
 print("모니터링 시작", flush=True)
 
 while True:
-    res = requests.get(URL)
-    html = res.text
+    res = requests.get(API_URL)
+    data = res.json()
 
-    soup = BeautifulSoup(html, "html.parser")
-    button = soup.find("a", class_="btn_style direct")
+    sale_type = data["saleType"]
 
-    # 구매 가능 조건
-    if "/cart" in html or "/order" in html:
+    print("현재 상태:", sale_type, flush=True)
+
+    if sale_type == "AVAILABLE":
         print("🔥 구매 가능!", flush=True)
-        send_telegram("🔥 재입고!\n" + URL)
+        send_telegram("🔥 재입고 발생!")
         break
-    else:
-        print("아직 품절 상태", flush=True)
 
-    time.sleep(5)
+    time.sleep(3)
