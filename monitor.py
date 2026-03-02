@@ -52,7 +52,7 @@ while True:
         elif sale_type != last_sale_type:
             # 상태가 바뀔 때마다 알림
             if sale_type == "AVAILABLE":
-                send_telegram(f"🔥 재입고! 구매 가능 상태로 변경됐어요!\n이전: {last_sale_type} → 현재: {sale_type}")
+                send_telegram(f"🔥 재입고! 구매 가능 상태로 변경됐어요!\n이전: {last_sale_type} → 현재: {sale_type} \nhttps://store.sony.co.kr/product-view/132237901")
             else:
                 send_telegram(f"📦 상태 변경\n이전: {last_sale_type} → 현재: {sale_type} (stockCnt={stock_cnt})")
             last_sale_type = sale_type
