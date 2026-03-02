@@ -1,6 +1,6 @@
 import requests, time, os
 
-API_URL = "https://shop-api.e-ncp.com/products/132237901/options"
+API_URL = "https://shop-api.e-ncp.com/products/131263965/options"
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
@@ -31,4 +31,4 @@ while True:
     except Exception as e:
         print("에러:", e, flush=True)
 
-    time.sleep(3)
+    time.sleep(5)
