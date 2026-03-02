@@ -24,11 +24,15 @@ while True:
     res = requests.get(URL)
     html = res.text
 
-    if "/order/sheet" in html:
-        print("🔥 구매 가능!", flush=True)
-        send_telegram("🔥 소니 재입고!\n지금 바로 구매하세요:\n" + URL)
-        break
-    else:
-        print("아직 품절 상태", flush=True)
+from bs4 import BeautifulSoup
 
+soup = BeautifulSoup(html, "html.parser")
+
+button = soup.find("a", class_="btn_style direct")
+
+if button:
+    print("🔥 구매 가능!")
+else:
+    print("아직 품절 상태")
+    
     time.sleep(5)
