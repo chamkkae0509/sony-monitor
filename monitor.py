@@ -4,6 +4,7 @@ import random
 import requests
 
 API_URL = "https://shop-api.e-ncp.com/products/132237901/options"
+PRODUCT_URL = "https://store.sony.co.kr/product-view/132237901"
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
@@ -31,7 +32,6 @@ def fetch_sale_type():
     opt = (data.get("flatOptions") or [{}])[0]
     return opt.get("saleType"), opt.get("stockCnt")
 
-# 시작 전 환경변수 체크
 if not BOT_TOKEN or not CHAT_ID or not SHOPBY_CLIENT_ID:
     raise RuntimeError("BOT_TOKEN / CHAT_ID / SHOPBY_CLIENT_ID 환경변수를 확인하세요.")
 
@@ -45,19 +45,27 @@ while True:
         print(f"상태={sale_type}, stockCnt={stock_cnt}", flush=True)
 
         if last_sale_type is None:
-            # 최초 실행 시 이미 구매 가능이면 즉시 알림
             last_sale_type = sale_type
             if sale_type == "AVAILABLE":
-                send_telegram("이미 구매 가능 상태예요!")
+                send_telegram(
+                    f"😮‍💨 이미 구매 가능 상태예요!\n"
+                    f"👉 구매 페이지: {PRODUCT_URL}"
+                )
         elif sale_type != last_sale_type:
-            # 상태가 바뀔 때마다 알림
             if sale_type == "AVAILABLE":
-                send_telegram(f"🔥 재입고! 구매 가능 상태로 변경됐어요!\n이전: {last_sale_type} → 현재: {sale_type} \nhttps://store.sony.co.kr/product-view/132237901")
+                send_telegram(
+                    f"🔥 재입고! 구매 가능 상태로 변경됐어요!\n"
+                    f"이전: {last_sale_type} → 현재: {sale_type}\n"
+                    f"👉 구매 페이지: {PRODUCT_URL}"
+                )
             else:
-                send_telegram(f"📦 상태 변경\n이전: {last_sale_type} → 현재: {sale_type} (stockCnt={stock_cnt})")
+                send_telegram(
+                    f"📦 상태 변경\n"
+                    f"이전: {last_sale_type} → 현재: {sale_type} (stockCnt={stock_cnt})"
+                )
             last_sale_type = sale_type
 
     except Exception as e:
         print("에러:", repr(e), flush=True)
 
-    time.sleep(3 + random.uniform(0, 1))
+    time.sleep(5 + random.uniform(0, 1))
