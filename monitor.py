@@ -1,6 +1,6 @@
 import os, time, random, requests
 
-API_URL = "https://shop-api.e-ncp.com/products/132237901/options"
+API_URL = "https://shop-api.e-ncp.com/products/123967519/options"
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 SHOPBY_CLIENT_ID = os.getenv("SHOPBY_CLIENT_ID")
