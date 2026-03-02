@@ -1,5 +1,9 @@
 import requests
 import time
+import requests
+import time
+import os
+
 
 URL = "https://store.sony.co.kr/product-view/132237901"
 
