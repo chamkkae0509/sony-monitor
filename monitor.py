@@ -3,8 +3,9 @@ import time
 
 URL = "https://store.sony.co.kr/product-view/132237901"
 
-BOT_TOKEN = "8635320559:AAE7xUfiWhSrigDhvPgkZOQ8SknrlyQqkPo"
-CHAT_ID = "8590643905"
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
+
 
 def send_telegram(msg):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
