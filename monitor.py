@@ -3,6 +3,7 @@ import time
 import requests
 import time
 import os
+from bs4 import BeautifulSoup
 
 
 URL = "https://store.sony.co.kr/product-view/131844793"
@@ -24,7 +25,7 @@ while True:
     res = requests.get(URL)
     html = res.text
 
-from bs4 import BeautifulSoup
+
 
 soup = BeautifulSoup(html, "html.parser")
 
