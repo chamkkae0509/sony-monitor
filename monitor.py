@@ -2,7 +2,7 @@ import requests
 import time
 import os
 
-API_URL = "옵션 API URL"
+API_URL = "https://shop-api.e-ncp.com/products/131263965/options"
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
