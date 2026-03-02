@@ -1,3 +1,8 @@
+import sys
+
+print("프로그램 시작", flush=True)
+print("버튼 상태:", status, flush=True)
+
 import requests
 from bs4 import BeautifulSoup
 import time
