@@ -7,7 +7,9 @@ API_URL = "https://shop-api.e-ncp.com/products/132237901/options"
 PRODUCT_URL = "https://store.sony.co.kr/product-view/132237901"
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-CHAT_ID = os.getenv("CHAT_ID")
+# CHAT_ID: "000000,111111,222222" 형태로 저장되어 있다고 가정
+CHAT_ID_RAW = os.getenv("CHAT_ID", "")
+CHAT_IDS = [cid.strip() for cid in CHAT_ID_RAW.split(",") if cid.strip()]
 SHOPBY_CLIENT_ID = os.getenv("SHOPBY_CLIENT_ID")
 
 HEADERS = {
@@ -20,8 +22,17 @@ HEADERS = {
 
 def send_telegram(msg):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    res = requests.post(url, data={"chat_id": CHAT_ID, "text": msg}, timeout=10)
-    res.raise_for_status()
+    for chat_id in CHAT_IDS:
+        try:
+            res = requests.post(
+                url,
+                data={"chat_id": chat_id, "text": msg},
+                timeout=10,
+            )
+            res.raise_for_status()
+        except Exception as e:
+            # 한 명에게 실패해도 나머지에게는 계속 보내도록
+            print(f"텔레그램 전송 실패 (chat_id={chat_id}): {repr(e)}", flush=True)
 
 def fetch_sale_type():
     res = requests.get(API_URL, headers=HEADERS, timeout=10)
@@ -32,7 +43,7 @@ def fetch_sale_type():
     opt = (data.get("flatOptions") or [{}])[0]
     return opt.get("saleType"), opt.get("stockCnt")
 
-if not BOT_TOKEN or not CHAT_ID or not SHOPBY_CLIENT_ID:
+if not BOT_TOKEN or not CHAT_IDS or not SHOPBY_CLIENT_ID:
     raise RuntimeError("BOT_TOKEN / CHAT_ID / SHOPBY_CLIENT_ID 환경변수를 확인하세요.")
 
 print("모니터링 시작", flush=True)
@@ -48,19 +59,19 @@ while True:
             last_sale_type = sale_type
             if sale_type == "AVAILABLE":
                 send_telegram(
-                    f"😮‍💨 이미 구매 가능 상태예요!\n"
+                    "😮‍💨 이미 구매 가능 상태예요!\n"
                     f"👉 구매 페이지: {PRODUCT_URL}"
                 )
         elif sale_type != last_sale_type:
             if sale_type == "AVAILABLE":
                 send_telegram(
-                    f"🔥 재입고! 구매 가능 상태로 변경됐어요!\n"
+                    "🔥 재입고! 구매 가능 상태로 변경됐어요!\n"
                     f"이전: {last_sale_type} → 현재: {sale_type}\n"
                     f"👉 구매 페이지: {PRODUCT_URL}"
                 )
             else:
                 send_telegram(
-                    f"📦 SOLD OUT,,,다음 재입고 소식을 기다려 주세요.\n"
+                    "📦 SOLD OUT...재입고를 기다려 주세요.\n"
                     f"이전: {last_sale_type} → 현재: {sale_type} (stockCnt={stock_cnt})"
                 )
             last_sale_type = sale_type
