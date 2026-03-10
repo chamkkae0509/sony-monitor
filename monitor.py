@@ -60,7 +60,7 @@ while True:
                 )
             else:
                 send_telegram(
-                    f"📦 상태 변경\n"
+                    f"📦 SOLD OUT,,,다음 재입고 소식을 기다려 주세요.\n"
                     f"이전: {last_sale_type} → 현재: {sale_type} (stockCnt={stock_cnt})"
                 )
             last_sale_type = sale_type
